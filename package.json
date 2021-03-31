@@ -2,7 +2,7 @@
   "name": "alloy-demo",
   "version": "1.0.0",
   "description": "A take home project from alloy",
-  "main": "index.js",
+  "main": "server/server.ts",
   "author": "Viral Ruparel",
   "license": "MIT",
   "scripts": {

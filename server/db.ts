@@ -5,15 +5,14 @@ dotenv.config();
 
 const dbConnect = () =>
   new Promise((resolve, reject) => {
-    mongoose.connect('xxx-xxxx-xxx-xxxx', {
+    mongoose.connect( process.env.MONGO_URI, {
       useNewUrlParser: true,
-      poolsize: 0,
+      poolSize: 0,
       useCreateIndex: true,
       useUnifiedTopology: true,
-      socketOptions: {
-        socketTimeoutMS: 600
+      socketTimeoutMS: 600
       }
-    });
+    );
 
     mongoose.connection.on('connected', () => {
       console.log('Connected');

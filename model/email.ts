@@ -3,7 +3,8 @@ import { Document, model, Schema } from "mongoose";
 const EmailSchema = Schema({
   email: {
     type: String,
-    required: true
+    required: true,
+    unique:true
   }
 })
 

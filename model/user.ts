@@ -3,7 +3,8 @@ import { Document, model, Schema } from "mongoose"
 const UserSchema = Schema({
   userId: {
     type: String,
-    required: true
+    required: true,
+    unique:true
   },
   accessToken: {
     type: String,

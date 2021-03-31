@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import path from "path";
 import db from "./db";
 import Email from "../model/email";
@@ -12,13 +12,14 @@ dotenv.config();
 const app = express();
 
 cronJob.start();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 express.static(path.join(__dirname, "../public"));
 
 app.get("/auth/redirect", async function (req, res) {
   if (!req.query.code) {
-    return;
+    res.status(400).send("Query Code not found")
+    // return;
   }
   try {
     var data = {
@@ -26,6 +27,7 @@ app.get("/auth/redirect", async function (req, res) {
       client_secret: process.env.CLIENT_SECRET,
       code: req.query.code,
     };
+
     const response = await slackBot.getAccessToken(data);
     console.log("Response:::::", response);
     const user = {
@@ -34,7 +36,7 @@ app.get("/auth/redirect", async function (req, res) {
     };
     const newUser = new User(user);
     await newUser.save();
-    res.sendFile(path.resolve(__dirname + "/../../public/success.html"));
+    res.sendFile(path.resolve(__dirname + "/../public/success.html"));
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
@@ -42,7 +44,7 @@ app.get("/auth/redirect", async function (req, res) {
 });
 
 app.get("/slack", function (req, res) {
-  res.sendFile(path.resolve(__dirname + "/../../public/slack.html"));
+  res.sendFile(path.resolve(__dirname + "/../public/slack.html"));
 });
 
 app.post("/event", async function (req, res) {
@@ -55,17 +57,20 @@ app.post("/event", async function (req, res) {
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
-  }
-});
+  } 
+}); 
 
-db.dbConnect()
-  .then(() => {
-    try {
-      app.listen(process.env.port || 3000, () => {
-        console.log("App is listening on port 3000!");
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  })
-  .catch((err) => console.log(err));
+const initializeApp= async()=>{
+  try{
+    await db.dbConnect();
+    const port = process.env.port || 3000
+    app.listen(port, () => {
+      console.log(`App is listening on port ${port}!`);
+    });
+  }catch(err){
+    console.log(err);
+
+  }
+}
+
+initializeApp();
